@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Household Chores Dashboard</title>
+  <link rel="stylesheet" href="src/styles.css" />
+</head>
+<body data-theme="minimalist">
+
+<button id="header-toggle" title="Show/hide controls">▼</button>
+
+<header class="hidden">
+  <span class="header-title">🏠 Chores</span>
+
+  <div class="controls">
+    <select id="filter-room" title="Filter by room">
+      <option value="">All rooms</option>
+    </select>
+
+    <select id="filter-assignee" title="Filter by assignee">
+      <option value="">All assignees</option>
+    </select>
+
+    <select id="filter-urgency" title="Filter by urgency">
+      <option value="">All urgency</option>
+      <option value="hot">🔴 Hot</option>
+      <option value="warm">🟡 Warm</option>
+      <option value="cool">🔵 Cool</option>
+    </select>
+  </div>
+
+  <div class="controls">
+    <button class="theme-btn active" data-theme="minimalist">Minimalist</button>
+    <button class="theme-btn" data-theme="dark">Dark</button>
+    <button class="theme-btn" data-theme="cozy">Cozy</button>
+  </div>
+</header>
+
+<main>
+  <div id="cards">
+    <p class="empty">Loading tasks…</p>
+  </div>
+</main>
+
+<script type="module" src="src/app.js"></script>
+</body>
+</html>
