@@ -4,7 +4,7 @@ const path = require('path');
 const yaml = require('js-yaml');
 
 const tasksDir = path.join(__dirname, '..', 'tasks');
-const outputFile = path.join(__dirname, '..', 'public', 'tasks.json');
+const outputFile = path.join(__dirname, '..', 'docs', 'tasks.json');
 
 const REQUIRED_FIELDS = ['title', 'schedule'];
 const VALID_SCHEDULE_TYPES = ['weekly', 'monthly'];
@@ -61,7 +61,7 @@ console.log(`Built ${tasks.length} task(s) → ${outputFile}`);
 
 // Copy src/ into public/src/
 const srcDir = path.join(__dirname, '..', 'src');
-const publicSrcDir = path.join(__dirname, '..', 'public', 'src');
+const publicSrcDir = path.join(__dirname, '..', 'docs', 'src');
 fs.mkdirSync(publicSrcDir, { recursive: true });
 for (const file of fs.readdirSync(srcDir)) {
   fs.copyFileSync(path.join(srcDir, file), path.join(publicSrcDir, file));
