@@ -1,0 +1,11 @@
+title: "Vacuum living room"
+description: "Vacuum the carpet and under the sofas"
+room: "Living Room"
+assignee: "Shared"
+priority: "medium"
+icon: "🧹"
+
+schedule:
+  type: "weekly"
+  interval: 1
+  weekday: "saturday"

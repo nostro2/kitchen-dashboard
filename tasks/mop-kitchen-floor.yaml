@@ -1,0 +1,12 @@
+title: "Mop kitchen floor"
+description: "Sweep and mop the kitchen floor"
+room: "Kitchen"
+assignee: "Shared"
+priority: "medium"
+icon: "🧺"
+
+schedule:
+  type: "weekly"
+  interval: 2
+  weekday: "monday"
+  anchor_date: "2026-01-05"

@@ -1,0 +1,110 @@
+[
+  {
+    "title": "Black bags, glass & cans",
+    "description": "Put out black bags, glass bottles, and cans for collection",
+    "room": "Outside",
+    "assignee": "Shared",
+    "priority": "high",
+    "icon": "🗑️",
+    "schedule": {
+      "type": "weekly",
+      "interval": 2,
+      "weekday": "wednesday",
+      "anchor_date": "2026-01-14"
+    }
+  },
+  {
+    "title": "Cardboard & plastic",
+    "description": "Put out cardboard and plastic recycling for collection",
+    "room": "Outside",
+    "assignee": "Shared",
+    "priority": "high",
+    "icon": "♻️",
+    "schedule": {
+      "type": "weekly",
+      "interval": 2,
+      "weekday": "wednesday",
+      "anchor_date": "2026-01-07"
+    }
+  },
+  {
+    "title": "Change bed sheets",
+    "description": "Strip and wash bed linen, put on fresh sheets",
+    "room": "Bedroom",
+    "assignee": "Shared",
+    "priority": "medium",
+    "icon": "🛏️",
+    "schedule": {
+      "type": "weekly",
+      "interval": 2,
+      "weekday": "saturday",
+      "anchor_date": "2026-01-03"
+    }
+  },
+  {
+    "title": "Clean bathroom",
+    "description": "Scrub toilet, sink, and bath. Wipe mirrors and surfaces",
+    "room": "Bathroom",
+    "assignee": "Shared",
+    "priority": "high",
+    "icon": "🚿",
+    "schedule": {
+      "type": "weekly",
+      "interval": 1,
+      "weekday": "sunday"
+    }
+  },
+  {
+    "title": "Clean fridge",
+    "description": "Remove all items, wipe shelves and drawers, check expiry dates",
+    "room": "Kitchen",
+    "assignee": "Shared",
+    "priority": "medium",
+    "icon": "🧊",
+    "schedule": {
+      "type": "monthly",
+      "interval": 1,
+      "day": 15
+    }
+  },
+  {
+    "title": "Mop kitchen floor",
+    "description": "Sweep and mop the kitchen floor",
+    "room": "Kitchen",
+    "assignee": "Shared",
+    "priority": "medium",
+    "icon": "🧺",
+    "schedule": {
+      "type": "weekly",
+      "interval": 2,
+      "weekday": "monday",
+      "anchor_date": "2026-01-05"
+    }
+  },
+  {
+    "title": "Vacuum living room",
+    "description": "Vacuum the carpet and under the sofas",
+    "room": "Living Room",
+    "assignee": "Shared",
+    "priority": "medium",
+    "icon": "🧹",
+    "schedule": {
+      "type": "weekly",
+      "interval": 1,
+      "weekday": "saturday"
+    }
+  },
+  {
+    "title": "Water plants",
+    "description": "Water all indoor plants thoroughly",
+    "room": "Living Room",
+    "assignee": "Shared",
+    "priority": "low",
+    "icon": "🌿",
+    "schedule": {
+      "type": "weekly",
+      "interval": 1,
+      "weekday": "wednesday"
+    }
+  }
+]

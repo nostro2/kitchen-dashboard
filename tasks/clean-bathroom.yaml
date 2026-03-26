@@ -1,0 +1,11 @@
+title: "Clean bathroom"
+description: "Scrub toilet, sink, and bath. Wipe mirrors and surfaces"
+room: "Bathroom"
+assignee: "Shared"
+priority: "high"
+icon: "🚿"
+
+schedule:
+  type: "weekly"
+  interval: 1
+  weekday: "sunday"

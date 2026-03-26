@@ -1,0 +1,12 @@
+title: "Change bed sheets"
+description: "Strip and wash bed linen, put on fresh sheets"
+room: "Bedroom"
+assignee: "Shared"
+priority: "medium"
+icon: "🛏️"
+
+schedule:
+  type: "weekly"
+  interval: 2
+  weekday: "saturday"
+  anchor_date: "2026-01-03"

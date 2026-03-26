@@ -1,0 +1,326 @@
+/* ─── Reset & base ─────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  transition: background 0.3s, color 0.3s;
+}
+
+/* ─── Theme: Minimalist (default) ─────────────────────────────────────────── */
+body[data-theme="minimalist"] {
+  color-scheme: light;
+  --bg:          #f4f4f5;
+  --surface:     #ffffff;
+  --text:        #18181b;
+  --text-muted:  #71717a;
+  --border:      #e4e4e7;
+  --accent:      #3b82f6;
+  --font:        system-ui, -apple-system, sans-serif;
+  --radius:      10px;
+  --shadow:      0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-hover:0 4px 12px rgba(0,0,0,0.12);
+  --header-bg:   #ffffff;
+
+  --cool-bg:  #eff6ff;
+  --cool-bar: #3b82f6;
+  --cool-text:#1d4ed8;
+  --warm-bg:  #fffbeb;
+  --warm-bar: #f59e0b;
+  --warm-text:#b45309;
+  --hot-bg:   #fef2f2;
+  --hot-bar:  #ef4444;
+  --hot-text: #b91c1c;
+}
+
+/* ─── Theme: Dark (Solarized Dark) ───────────────────────────────────────── */
+body[data-theme="dark"] {
+  color-scheme: dark;
+  --bg:          #002b36;
+  --surface:     #073642;
+  --text:        #839496;
+  --text-muted:  #586e75;
+  --border:      #0a4452;
+  --accent:      #268bd2;
+  --font:        system-ui, -apple-system, sans-serif;
+  --radius:      6px;
+  --shadow:      0 1px 4px rgba(0,0,0,0.4);
+  --shadow-hover:0 4px 16px rgba(0,0,0,0.6);
+  --header-bg:   #073642;
+
+  --cool-bg:  #003d28;
+  --cool-bar: #859900;
+  --cool-text:#b8ca00;
+  --warm-bg:  #3a2500;
+  --warm-bar: #cb4b16;
+  --warm-text:#e06830;
+  --hot-bg:   #3a0a00;
+  --hot-bar:  #dc322f;
+  --hot-text: #ff5c5a;
+}
+
+/* ─── Theme: Cozy ─────────────────────────────────────────────────────────── */
+body[data-theme="cozy"] {
+  color-scheme: light;
+  --bg:          #fdf6ec;
+  --surface:     #fff8f0;
+  --text:        #4a3728;
+  --text-muted:  #9c7c6b;
+  --border:      #e8d5b7;
+  --accent:      #e07b54;
+  --font:        Georgia, 'Palatino Linotype', serif;
+  --radius:      16px;
+  --shadow:      0 2px 8px rgba(180,120,80,0.10);
+  --shadow-hover:0 6px 18px rgba(180,120,80,0.18);
+  --header-bg:   #fff3e0;
+
+  --cool-bg:  #e8f5e9;
+  --cool-bar: #66bb6a;
+  --cool-text:#2e7d32;
+  --warm-bg:  #fff8e1;
+  --warm-bar: #ffa726;
+  --warm-text:#e65100;
+  --hot-bg:   #fbe9e7;
+  --hot-bar:  #e07b54;
+  --hot-text: #bf360c;
+}
+
+/* ─── Header toggle ───────────────────────────────────────────────────────── */
+#header-toggle {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  background: var(--surface);
+  color: var(--border);
+  border: 1px solid var(--border);
+  border-top: none;
+  border-radius: 0 0 6px 6px;
+  padding: 0.1rem 1.2rem 0.2rem;
+  font-size: 0.7rem;
+  cursor: pointer;
+  line-height: 1;
+  transition: color 0.2s, border-color 0.2s;
+}
+#header-toggle:hover { color: var(--text-muted); border-color: var(--text-muted); }
+
+header.hidden {
+  display: none;
+}
+
+/* ─── Layout ───────────────────────────────────────────────────────────────── */
+header {
+  background: var(--header-bg);
+  border-bottom: 1px solid var(--border);
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.header-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--accent);
+  flex: 1 0 auto;
+  letter-spacing: -0.01em;
+}
+
+[data-theme="dark"] .header-title { color: #268bd2; }
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+/* ─── Filter selects ───────────────────────────────────────────────────────── */
+select {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.35rem 0.7rem;
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s;
+}
+select:focus { border-color: var(--accent); }
+
+/* ─── Theme buttons ───────────────────────────────────────────────────────── */
+.theme-btn {
+  background: var(--surface);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.35rem 0.75rem;
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.theme-btn:hover { border-color: var(--accent); color: var(--text); }
+.theme-btn.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+[data-theme="dark"] .theme-btn.active { color: #fff; }
+
+/* ─── Card grid ───────────────────────────────────────────────────────────── */
+main {
+  padding: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+#cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+/* ─── Card ────────────────────────────────────────────────────────────────── */
+.card {
+  display: flex;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  transition: box-shadow 0.2s, transform 0.15s;
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 4px;
+  border-radius: var(--radius) 0 0 var(--radius);
+}
+
+.card.neutral { background: var(--surface); }
+.card.neutral::before { background: var(--border); }
+.card.neutral .card-countdown { color: var(--text-muted); }
+.card.neutral .fill { background: var(--border); }
+
+.card.cool { background: var(--cool-bg); }
+.card.cool::before { background: var(--cool-bar); }
+
+.card.warm { background: var(--warm-bg); }
+.card.warm::before { background: var(--warm-bar); }
+
+.card.hot { background: var(--hot-bg); }
+.card.hot::before { background: var(--hot-bar); }
+
+.card:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-2px);
+}
+
+/* Inactive alternating task */
+.card.inactive {
+  opacity: 0.45;
+  filter: grayscale(60%);
+}
+.card.inactive:hover { transform: none; box-shadow: var(--shadow); }
+
+/* ─── Card icon ───────────────────────────────────────────────────────────── */
+.card-icon {
+  font-size: 1.8rem;
+  flex-shrink: 0;
+  line-height: 1;
+  padding-top: 0.1rem;
+}
+
+/* ─── Card body ───────────────────────────────────────────────────────────── */
+.card-body { flex: 1; min-width: 0; }
+
+.card-title {
+  font-size: 0.975rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 0.15rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-meta {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: 0.35rem;
+}
+
+.card-desc {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ─── Countdown ───────────────────────────────────────────────────────────── */
+.card-countdown {
+  font-size: 0.82rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+.card.cool .card-countdown { color: var(--cool-text); }
+.card.warm .card-countdown { color: var(--warm-text); }
+.card.hot  .card-countdown { color: var(--hot-text); }
+
+.overdue-label::before {
+  content: '⚠ ';
+}
+
+/* ─── Progress bar ────────────────────────────────────────────────────────── */
+.progress-bar {
+  height: 6px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-bar .fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 1s linear;
+}
+
+.card.cool .fill { background: var(--cool-bar); }
+.card.warm .fill { background: var(--warm-bar); }
+.card.hot  .fill { background: var(--hot-bar); }
+
+/* ─── Empty state ─────────────────────────────────────────────────────────── */
+.empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: var(--text-muted);
+  padding: 3rem;
+  font-size: 0.95rem;
+}
+.empty.error { color: var(--hot-text); }
+
+/* ─── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  header { padding: 0.75rem 1rem; }
+  main { padding: 1rem; }
+  .header-title { font-size: 1.1rem; }
+}

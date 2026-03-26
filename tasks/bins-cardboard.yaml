@@ -1,0 +1,12 @@
+title: "Cardboard & plastic"
+description: "Put out cardboard and plastic recycling for collection"
+room: "Outside"
+assignee: "Shared"
+priority: "high"
+icon: "♻️"
+
+schedule:
+  type: "weekly"
+  interval: 2
+  weekday: "wednesday"
+  anchor_date: "2026-01-07"
