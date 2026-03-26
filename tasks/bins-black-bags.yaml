@@ -1,0 +1,12 @@
+title: "Black bags, glass & cans"
+description: "Put out black bags, glass bottles, and cans for collection"
+room: "Outside"
+assignee: "Shared"
+priority: "high"
+icon: "🗑️"
+
+schedule:
+  type: "weekly"
+  interval: 2
+  weekday: "wednesday"
+  anchor_date: "2026-01-14"

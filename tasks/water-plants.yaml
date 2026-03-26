@@ -1,0 +1,11 @@
+title: "Water plants"
+description: "Water all indoor plants thoroughly"
+room: "Living Room"
+assignee: "Shared"
+priority: "low"
+icon: "🌿"
+
+schedule:
+  type: "weekly"
+  interval: 1
+  weekday: "wednesday"

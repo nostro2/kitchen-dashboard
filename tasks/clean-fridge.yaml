@@ -1,0 +1,11 @@
+title: "Clean fridge"
+description: "Remove all items, wipe shelves and drawers, check expiry dates"
+room: "Kitchen"
+assignee: "Shared"
+priority: "medium"
+icon: "🧊"
+
+schedule:
+  type: "monthly"
+  interval: 1
+  day: 15
