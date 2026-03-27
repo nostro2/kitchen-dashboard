@@ -96,6 +96,19 @@
     }
   },
   {
+    "title": "Washing machine",
+    "description": "Do a batch of clothes and bedding in the washing machine",
+    "room": "Utility",
+    "assignee": "Shared",
+    "priority": "medium",
+    "icon": "👕",
+    "schedule": {
+      "type": "weekly",
+      "interval": 1,
+      "weekday": "saturday"
+    }
+  },
+  {
     "title": "Water plants",
     "description": "Water all indoor plants thoroughly",
     "room": "Living Room",
