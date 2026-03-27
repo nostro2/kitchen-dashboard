@@ -6,6 +6,7 @@ priority: "medium"
 icon: "🧊"
 
 schedule:
-  type: "monthly"
-  interval: 1
-  day: 15
+  type: "weekly"
+  interval: 4
+  weekday: "tuesday"
+  anchor_date: "2026-03-24"
