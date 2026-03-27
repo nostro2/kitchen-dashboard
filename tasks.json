@@ -36,9 +36,8 @@
     "icon": "🛏️",
     "schedule": {
       "type": "weekly",
-      "interval": 2,
-      "weekday": "friday",
-      "anchor_date": "2026-03-27"
+      "interval": 1,
+      "weekday": "friday"
     }
   },
   {

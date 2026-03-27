@@ -79,8 +79,8 @@ function computeWeeklyAnchored(s, now, task) {
   // The due date is the target weekday within (or starting from) that window
   let nextDue = advanceToWeekday(windowStart, targetDay);
 
-  // If we've passed this occurrence, roll to the next cycle
-  if (nextDue < startOfDay(now)) {
+  // If we've passed this occurrence (including today), roll to the next cycle
+  if (nextDue <= startOfDay(now)) {
     const nextWindowStart = addDays(anchor, (cycleIndex + 1) * interval * 7);
     nextDue = advanceToWeekday(nextWindowStart, targetDay);
   }
@@ -138,7 +138,7 @@ function progressPct(cycleStart, nextDue, now) {
 
 function urgencyClass(pct, nextDue, now) {
   if ((nextDue - now) > 7 * DAY_MS) return 'neutral';
-  if (pct >= 80) return 'hot';
+  if ((nextDue - now) < DAY_MS) return 'hot';
   if (pct >= 50) return 'warm';
   return 'cool';
 }
@@ -321,3 +321,112 @@ async function init() {
 }
 
 init();
+
+// ─── Train departures ──────────────────────────────────────────────────────
+
+const TRAIN_STATIONS = [
+  { crs: 'hyh', boardId: 'train-hyh-board', updatedId: 'train-hyh-updated' },
+  { crs: 'cet', boardId: 'train-cet-board', updatedId: 'train-cet-updated' },
+];
+
+// Optional: set your free NRE Darwin token here
+// Register at: https://realtime.nationalrail.co.uk/OpenLDBWSRegistration/Registration
+const NRE_TOKEN = '';
+
+function fmtTime(d) {
+  return d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+}
+
+async function fetchDepartures(crs) {
+  const tokenParam = NRE_TOKEN ? `?accessToken=${encodeURIComponent(NRE_TOKEN)}` : '';
+  const res = await fetch(`https://huxley2.azurewebsites.net/departures/${crs}/2${tokenParam}`);
+  if (!res.ok) throw new Error(`HTTP ${res.status} — NRE token may be needed`);
+  return res.json();
+}
+
+function trainProgressPct(timeStr, now) {
+  if (!timeStr || !timeStr.includes(':')) return 0;
+  const [h, m] = timeStr.split(':').map(Number);
+  const due = new Date(now);
+  due.setHours(h, m, 0, 0);
+  // If parsed time looks like it was earlier today but is actually tomorrow (post-midnight edge)
+  if (due < now && (now - due) > 2 * 3600000) due.setDate(due.getDate() + 1);
+  const windowMs = 30 * 60 * 1000;
+  const msLeft = due - now;
+  if (msLeft <= 0) return 100;
+  if (msLeft >= windowMs) return 0;
+  return ((windowMs - msLeft) / windowMs) * 100;
+}
+
+function trainUrgency(pct) {
+  if (pct >= 80) return 'hot';
+  if (pct >= 50) return 'warm';
+  return 'cool';
+}
+
+function renderTrainBoard(data, boardEl, updatedEl) {
+  const services = data.trainServices || [];
+  const now = new Date();
+  updatedEl.textContent = `Updated ${fmtTime(now)}`;
+
+  if (services.length === 0) {
+    boardEl.innerHTML = '<p class="train-empty">No departures</p>';
+    return;
+  }
+
+  boardEl.innerHTML = services.map(s => {
+    const scheduled = s.std || '--:--';
+    const etd = s.etd || '';
+    const cancelled = s.isCancelled;
+    const dest = (s.destination && s.destination[0] && s.destination[0].locationName) || 'Unknown';
+    const platform = s.platform ? `Plat ${s.platform}` : '–';
+    const via = (s.destination && s.destination[0] && s.destination[0].via) ? ` <span class="train-via">${escHtml(s.destination[0].via)}</span>` : '';
+
+    let statusText, statusClass;
+    if (cancelled) {
+      statusText = 'Cancelled';
+      statusClass = 'cancelled';
+    } else if (!etd || etd === 'On time') {
+      statusText = 'On time';
+      statusClass = 'on-time';
+    } else if (etd === 'Delayed') {
+      statusText = 'Delayed';
+      statusClass = 'delayed';
+    } else {
+      statusText = etd;
+      statusClass = 'delayed';
+    }
+
+    const effectiveTime = (!cancelled && etd && etd !== 'On time' && etd !== 'Delayed') ? etd : scheduled;
+    const pct = cancelled ? 0 : trainProgressPct(effectiveTime, now);
+    const urg = trainUrgency(pct);
+
+    return `
+      <div class="train-entry ${urg}${cancelled ? ' train-cancelled' : ''}">
+        <div class="train-row">
+          <span class="train-time">${escHtml(scheduled)}</span>
+          <span class="train-dest">${escHtml(dest)}${via}</span>
+          <span class="train-platform">${escHtml(platform)}</span>
+          <span class="train-status ${statusClass}">${escHtml(statusText)}</span>
+        </div>
+        <div class="train-progress-bar"><div class="train-fill" style="width:${pct.toFixed(1)}%"></div></div>
+      </div>`;
+  }).join('');
+}
+
+async function refreshTrains() {
+  for (const { crs, boardId, updatedId } of TRAIN_STATIONS) {
+    const boardEl = document.getElementById(boardId);
+    const updatedEl = document.getElementById(updatedId);
+    try {
+      const data = await fetchDepartures(crs);
+      renderTrainBoard(data, boardEl, updatedEl);
+    } catch (e) {
+      boardEl.innerHTML = `<p class="train-empty error">Error: ${escHtml(e.message)}</p>`;
+      updatedEl.textContent = `Failed ${fmtTime(new Date())}`;
+    }
+  }
+}
+
+refreshTrains();
+setInterval(refreshTrains, 60000);

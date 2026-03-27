@@ -11,7 +11,7 @@
 <button id="header-toggle" title="Show/hide controls">▼</button>
 
 <header class="hidden">
-  <span class="header-title">🏠 Chores</span>
+  <span class="header-title">🏠 Dashboard</span>
 
   <div class="controls">
     <select id="filter-room" title="Filter by room">
@@ -42,6 +42,25 @@
     <p class="empty">Loading tasks…</p>
   </div>
 </main>
+
+<section id="trains">
+  <div class="train-panel" id="train-hyh">
+    <div class="train-station-header">
+      <span class="train-station-icon">🚆</span>
+      <span class="train-station-name">Hythe (Essex)</span>
+      <span class="train-last-updated" id="train-hyh-updated"></span>
+    </div>
+    <div class="train-board" id="train-hyh-board"><p class="train-empty">Loading…</p></div>
+  </div>
+  <div class="train-panel" id="train-cet">
+    <div class="train-station-header">
+      <span class="train-station-icon">🚆</span>
+      <span class="train-station-name">Colchester Town</span>
+      <span class="train-last-updated" id="train-cet-updated"></span>
+    </div>
+    <div class="train-board" id="train-cet-board"><p class="train-empty">Loading…</p></div>
+  </div>
+</section>
 
 <script type="module" src="src/app.js"></script>
 </body>
