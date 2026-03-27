@@ -8,5 +8,5 @@ icon: "🛏️"
 schedule:
   type: "weekly"
   interval: 2
-  weekday: "saturday"
-  anchor_date: "2026-01-03"
+  weekday: "friday"
+  anchor_date: "2026-03-27"

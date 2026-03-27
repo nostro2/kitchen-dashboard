@@ -37,8 +37,8 @@
     "schedule": {
       "type": "weekly",
       "interval": 2,
-      "weekday": "saturday",
-      "anchor_date": "2026-01-03"
+      "weekday": "friday",
+      "anchor_date": "2026-03-27"
     }
   },
   {
@@ -62,9 +62,10 @@
     "priority": "medium",
     "icon": "🧊",
     "schedule": {
-      "type": "monthly",
-      "interval": 1,
-      "day": 15
+      "type": "weekly",
+      "interval": 4,
+      "weekday": "tuesday",
+      "anchor_date": "2026-03-24"
     }
   },
   {
@@ -77,8 +78,8 @@
     "schedule": {
       "type": "weekly",
       "interval": 2,
-      "weekday": "monday",
-      "anchor_date": "2026-01-05"
+      "weekday": "friday",
+      "anchor_date": "2026-03-20"
     }
   },
   {
@@ -104,7 +105,7 @@
     "schedule": {
       "type": "weekly",
       "interval": 1,
-      "weekday": "wednesday"
+      "weekday": "thursday"
     }
   }
 ]
