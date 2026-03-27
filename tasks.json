@@ -36,9 +36,8 @@
     "icon": "🛏️",
     "schedule": {
       "type": "weekly",
-      "interval": 2,
-      "weekday": "saturday",
-      "anchor_date": "2026-01-03"
+      "interval": 1,
+      "weekday": "friday"
     }
   },
   {
@@ -62,9 +61,10 @@
     "priority": "medium",
     "icon": "🧊",
     "schedule": {
-      "type": "monthly",
-      "interval": 1,
-      "day": 15
+      "type": "weekly",
+      "interval": 4,
+      "weekday": "tuesday",
+      "anchor_date": "2026-03-24"
     }
   },
   {
@@ -77,8 +77,8 @@
     "schedule": {
       "type": "weekly",
       "interval": 2,
-      "weekday": "monday",
-      "anchor_date": "2026-01-05"
+      "weekday": "friday",
+      "anchor_date": "2026-03-20"
     }
   },
   {
@@ -95,6 +95,19 @@
     }
   },
   {
+    "title": "Washing machine",
+    "description": "Do a batch of clothes and bedding in the washing machine",
+    "room": "Utility",
+    "assignee": "Shared",
+    "priority": "medium",
+    "icon": "👕",
+    "schedule": {
+      "type": "weekly",
+      "interval": 1,
+      "weekday": "saturday"
+    }
+  },
+  {
     "title": "Water plants",
     "description": "Water all indoor plants thoroughly",
     "room": "Living Room",
@@ -104,7 +117,7 @@
     "schedule": {
       "type": "weekly",
       "interval": 1,
-      "weekday": "wednesday"
+      "weekday": "thursday"
     }
   }
 ]

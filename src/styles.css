@@ -318,9 +318,138 @@ main {
 }
 .empty.error { color: var(--hot-text); }
 
+/* ─── Train departures ────────────────────────────────────────────────────── */
+#trains {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem 1.5rem 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.train-panel {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.train-station-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  background: var(--accent);
+  color: #fff;
+}
+
+.train-station-icon { font-size: 1.1rem; }
+
+.train-station-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  flex: 1;
+}
+
+.train-last-updated {
+  font-size: 0.7rem;
+  opacity: 0.8;
+  white-space: nowrap;
+}
+
+.train-board { padding: 0.25rem 0; }
+
+.train-entry {
+  border-bottom: 1px solid var(--border);
+}
+.train-entry:last-child { border-bottom: none; }
+
+.train-row {
+  display: grid;
+  grid-template-columns: 3.5rem 1fr 4.5rem 5rem;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem 0.35rem;
+  font-size: 0.88rem;
+}
+
+.train-progress-bar {
+  height: 4px;
+  background: var(--border);
+  margin: 0 1rem 0.35rem;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.train-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 1s linear;
+}
+
+.train-entry.cool .train-fill { background: var(--cool-bar); }
+.train-entry.warm .train-fill { background: var(--warm-bar); }
+.train-entry.hot  .train-fill { background: var(--hot-bar); }
+
+.train-cancelled .train-time,
+.train-cancelled .train-dest {
+  text-decoration: line-through;
+  opacity: 0.55;
+}
+
+.train-time {
+  font-weight: 700;
+  font-size: 1rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
+
+.train-dest {
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.train-via {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-left: 0.25rem;
+}
+
+.train-platform {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.train-status {
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-align: right;
+  white-space: nowrap;
+}
+.train-status.on-time  { color: #16a34a; }
+.train-status.delayed  { color: var(--warm-text); }
+.train-status.cancelled{ color: var(--hot-text); }
+
+[data-theme="dark"] .train-status.on-time { color: #86efac; }
+
+.train-empty {
+  padding: 1rem;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+.train-empty.error { color: var(--hot-text); }
+
 /* ─── Responsive ──────────────────────────────────────────────────────────── */
 @media (max-width: 600px) {
   header { padding: 0.75rem 1rem; }
   main { padding: 1rem; }
   .header-title { font-size: 1.1rem; }
+  #trains { flex-direction: column; padding: 0 1rem 1rem; }
+  .train-row { grid-template-columns: 3rem 1fr 3.5rem 4.5rem; font-size: 0.8rem; }
 }
