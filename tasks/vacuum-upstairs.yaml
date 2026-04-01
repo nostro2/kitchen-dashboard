@@ -1,0 +1,11 @@
+title: "Vacuum upstairs"
+description: "Vacuum the bedrooms and upstairs landing"
+room: "Bedroom"
+assignee: "Shared"
+priority: "medium"
+icon: "🧹"
+
+schedule:
+  type: "weekly"
+  interval: 1
+  weekday: "tuesday"

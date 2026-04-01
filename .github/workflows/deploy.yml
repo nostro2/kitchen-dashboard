@@ -18,6 +18,8 @@ jobs:
 
       - run: npm install
       - run: npm run build
+        env:
+          RTT_TOKEN: ${{ secrets.RTT_TOKEN }}
 
       - uses: peaceiris/actions-gh-pages@v4
         with:

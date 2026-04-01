@@ -1,4 +1,4 @@
-title: "Vacuum living room"
+title: "Vacuum downstairs"
 description: "Vacuum the carpet and under the sofas"
 room: "Living Room"
 assignee: "Shared"
@@ -8,4 +8,4 @@ icon: "🧹"
 schedule:
   type: "weekly"
   interval: 1
-  weekday: "saturday"
+  weekday: "sunday"
