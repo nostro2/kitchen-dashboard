@@ -1,0 +1,12 @@
+title: "Clean windows"
+description: "Wipe down interior window panes and sills"
+room: "Shared"
+assignee: "Shared"
+priority: "low"
+icon: "🪟"
+
+schedule:
+  type: "weekly"
+  interval: 4
+  weekday: "saturday"
+  anchor_date: "2026-03-28"

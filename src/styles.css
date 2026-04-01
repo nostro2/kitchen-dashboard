@@ -1,11 +1,17 @@
 /* ─── Reset & base ─────────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
 body {
   font-family: var(--font);
   background: var(--bg);
   color: var(--text);
-  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   transition: background 0.3s, color 0.3s;
 }
 
@@ -120,9 +126,7 @@ header {
   align-items: center;
   flex-wrap: wrap;
   gap: 1rem;
-  position: sticky;
-  top: 0;
-  z-index: 10;
+  flex-shrink: 0;
 }
 
 .header-title {
@@ -179,9 +183,14 @@ select:focus { border-color: var(--accent); }
 
 /* ─── Card grid ───────────────────────────────────────────────────────────── */
 main {
+  flex: 1;
+  overflow-y: auto;
   padding: 1.5rem;
   max-width: 1200px;
+  width: 100%;
   margin: 0 auto;
+  align-self: stretch;
+  box-sizing: border-box;
 }
 
 #cards {
@@ -322,9 +331,12 @@ main {
 #trains {
   display: flex;
   gap: 1rem;
-  padding: 1rem 1.5rem 1.5rem;
+  padding: 0 1.5rem 1.5rem;
   max-width: 1200px;
+  width: 100%;
   margin: 0 auto;
+  flex-shrink: 0;
+  box-sizing: border-box;
 }
 
 .train-panel {
@@ -374,6 +386,14 @@ main {
   padding: 0.5rem 1rem 0.35rem;
   font-size: 0.88rem;
 }
+
+.train-urg-msg {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.1rem 1rem 0.3rem;
+}
+.train-entry.warm .train-urg-msg { color: var(--warm-text); }
+.train-entry.hot  .train-urg-msg { color: var(--hot-text); }
 
 .train-progress-bar {
   height: 4px;
@@ -445,11 +465,156 @@ main {
 }
 .train-empty.error { color: var(--hot-text); }
 
+/* ─── Weather ─────────────────────────────────────────────────────────────── */
+#weather {
+  padding: 0 1.5rem 1rem;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.weather-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.weather-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  background: var(--accent);
+  color: #fff;
+}
+
+.weather-header-icon { font-size: 1.1rem; }
+.weather-header-name { font-weight: 700; font-size: 0.95rem; flex: 1; }
+.weather-last-updated { font-size: 0.7rem; opacity: 0.8; }
+
+.weather-body {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+}
+
+.weather-current {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  border-right: 1px solid var(--border);
+  min-width: 200px;
+}
+
+.weather-icon { font-size: 2.8rem; line-height: 1; }
+
+.weather-temp {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1;
+}
+
+.weather-feels {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 0.15rem;
+}
+
+.weather-desc {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: 0.2rem;
+}
+
+.weather-wind {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 0.1rem;
+}
+
+.weather-forecast {
+  display: flex;
+  flex: 1;
+}
+
+.weather-day {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 0.5rem;
+  border-right: 1px solid var(--border);
+  gap: 0.2rem;
+}
+.weather-day:last-child { border-right: none; }
+
+.weather-day-name {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.weather-day-icon { font-size: 1.5rem; line-height: 1; }
+
+.weather-day-range {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.weather-day-rain {
+  font-size: 0.72rem;
+  color: var(--accent);
+}
+
+.weather-empty {
+  padding: 1rem;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+.weather-empty.error { color: var(--hot-text); }
+
 /* ─── Responsive ──────────────────────────────────────────────────────────── */
 @media (max-width: 600px) {
   header { padding: 0.75rem 1rem; }
   main { padding: 1rem; }
   .header-title { font-size: 1.1rem; }
-  #trains { flex-direction: column; padding: 0 1rem 1rem; }
-  .train-row { grid-template-columns: 3rem 1fr 3.5rem 4.5rem; font-size: 0.8rem; }
+
+  /* Weather: compact single row, hide forecast */
+  #weather { padding: 0 0.75rem 0.5rem; }
+  .weather-header { padding: 0.4rem 0.75rem; font-size: 0.85rem; }
+  .weather-header-icon { font-size: 0.95rem; }
+  .weather-body { flex-direction: row; }
+  .weather-current { padding: 0.5rem 0.75rem; gap: 0.5rem; min-width: 0; border-right: 1px solid var(--border); }
+  .weather-icon { font-size: 1.6rem; }
+  .weather-temp { font-size: 1.3rem; }
+  .weather-feels, .weather-wind { font-size: 0.7rem; }
+  .weather-desc { font-size: 0.75rem; }
+  .weather-forecast { overflow: hidden; }
+  .weather-day { padding: 0.4rem 0.25rem; gap: 0.1rem; }
+  .weather-day-name { font-size: 0.65rem; }
+  .weather-day-icon { font-size: 1.1rem; }
+  .weather-day-range { font-size: 0.7rem; }
+  .weather-day-rain { font-size: 0.65rem; }
+
+  /* Trains: stay side by side, compact */
+  #trains { padding: 0 0.75rem 0.75rem; gap: 0.5rem; }
+  .train-station-header { padding: 0.4rem 0.75rem; }
+  .train-station-name { font-size: 0.8rem; }
+  .train-board { padding: 0; }
+  .train-row { grid-template-columns: 2.8rem 1fr 3rem; font-size: 0.75rem; padding: 0.35rem 0.75rem 0.25rem; gap: 0.25rem; }
+  .train-status { font-size: 0.7rem; }
+  .train-time { font-size: 0.85rem; }
+  .train-progress-bar { margin: 0 0.75rem 0.25rem; height: 3px; }
+  .train-urg-msg { padding: 0 0.75rem 0.2rem; font-size: 0.68rem; }
 }

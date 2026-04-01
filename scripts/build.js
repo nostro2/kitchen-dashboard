@@ -3,6 +3,15 @@ const fs = require('fs');
 const path = require('path');
 const yaml = require('js-yaml');
 
+// Load .env if present
+const envFile = path.join(__dirname, '..', '.env');
+if (fs.existsSync(envFile)) {
+  for (const line of fs.readFileSync(envFile, 'utf8').split('\n')) {
+    const m = line.match(/^([^#=]+)=(.*)$/);
+    if (m) process.env[m[1].trim()] = m[2].trim();
+  }
+}
+
 const tasksDir = path.join(__dirname, '..', 'tasks');
 const outputFile = path.join(__dirname, '..', 'tasks.json');
 
@@ -57,3 +66,4 @@ for (const file of files) {
 
 fs.writeFileSync(outputFile, JSON.stringify(tasks, null, 2));
 console.log(`Built ${tasks.length} task(s) → ${outputFile}`);
+

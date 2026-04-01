@@ -203,7 +203,7 @@ function renderCards(tasks, filters) {
         <div class="card-meta">${escHtml(t.room || '')}${t.assignee ? ' · ' + escHtml(t.assignee) : ''}</div>
         ${t.description ? `<div class="card-desc">${escHtml(t.description)}</div>` : ''}
         <div class="card-countdown${overdue ? ' overdue-label' : ''}">${countdownStr}</div>
-        <div class="progress-bar"><div class="fill" style="width:${(100 - pct).toFixed(1)}%"></div></div>
+        <div class="progress-bar"><div class="fill" style="width:${pct.toFixed(1)}%"></div></div>
       </div>
     `;
     container.appendChild(card);
@@ -322,120 +322,19 @@ async function init() {
 
 init();
 
-// ─── Weather ───────────────────────────────────────────────────────────────
-
-const WEATHER_LAT = 51.889;
-const WEATHER_LON = 0.900;
-
-const WMO_CODES = {
-  0:  ['☀️',  'Clear sky'],
-  1:  ['🌤️', 'Mainly clear'],
-  2:  ['⛅',  'Partly cloudy'],
-  3:  ['☁️',  'Overcast'],
-  45: ['🌫️', 'Fog'],
-  48: ['🌫️', 'Icy fog'],
-  51: ['🌦️', 'Light drizzle'],
-  53: ['🌦️', 'Drizzle'],
-  55: ['🌧️', 'Heavy drizzle'],
-  61: ['🌧️', 'Light rain'],
-  63: ['🌧️', 'Rain'],
-  65: ['🌧️', 'Heavy rain'],
-  71: ['🌨️', 'Light snow'],
-  73: ['🌨️', 'Snow'],
-  75: ['❄️',  'Heavy snow'],
-  77: ['🌨️', 'Snow grains'],
-  80: ['🌦️', 'Light showers'],
-  81: ['🌧️', 'Showers'],
-  82: ['🌧️', 'Heavy showers'],
-  85: ['🌨️', 'Snow showers'],
-  86: ['🌨️', 'Heavy snow showers'],
-  95: ['⛈️',  'Thunderstorm'],
-  96: ['⛈️',  'Thunderstorm + hail'],
-  99: ['⛈️',  'Thunderstorm + hail'],
-};
-
-function wmoInfo(code) {
-  return WMO_CODES[code] || ['🌡️', `Code ${code}`];
-}
-
-async function fetchWeather() {
-  const url = `https://api.open-meteo.com/v1/forecast`
-    + `?latitude=${WEATHER_LAT}&longitude=${WEATHER_LON}`
-    + `&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m`
-    + `&daily=temperature_2m_max,temperature_2m_min,weather_code,precipitation_probability_max`
-    + `&timezone=Europe%2FLondon&forecast_days=3`;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  return res.json();
-}
-
-function renderWeather(data) {
-  const bodyEl = document.getElementById('weather-body');
-  const updatedEl = document.getElementById('weather-updated');
-  updatedEl.textContent = `Updated ${fmtTime(new Date())}`;
-
-  const c = data.current;
-  const d = data.daily;
-
-  const [curIcon, curDesc] = wmoInfo(c.weather_code);
-
-  const forecastDays = d.time.map((isoDate, i) => {
-    const date = new Date(isoDate + 'T00:00:00');
-    const name = i === 0 ? 'Today'
-               : i === 1 ? 'Tomorrow'
-               : date.toLocaleDateString(undefined, { weekday: 'short' });
-    const [icon] = wmoInfo(d.weather_code[i]);
-    const hi = Math.round(d.temperature_2m_max[i]);
-    const lo = Math.round(d.temperature_2m_min[i]);
-    const rain = d.precipitation_probability_max[i];
-    return { name, icon, hi, lo, rain };
-  });
-
-  bodyEl.className = 'weather-body';
-  bodyEl.innerHTML = `
-    <div class="weather-current">
-      <div class="weather-icon">${curIcon}</div>
-      <div>
-        <div class="weather-temp">${Math.round(c.temperature_2m)}°C</div>
-        <div class="weather-feels">Feels like ${Math.round(c.apparent_temperature)}°C</div>
-        <div class="weather-desc">${escHtml(curDesc)}</div>
-        <div class="weather-wind">💨 ${Math.round(c.wind_speed_10m)} km/h</div>
-      </div>
-    </div>
-    <div class="weather-forecast">
-      ${forecastDays.map(day => `
-        <div class="weather-day">
-          <div class="weather-day-name">${escHtml(day.name)}</div>
-          <div class="weather-day-icon">${day.icon}</div>
-          <div class="weather-day-range">${day.hi}° / ${day.lo}°</div>
-          ${day.rain > 0 ? `<div class="weather-day-rain">💧 ${day.rain}%</div>` : ''}
-        </div>
-      `).join('')}
-    </div>
-  `;
-}
-
-async function refreshWeather() {
-  const bodyEl = document.getElementById('weather-body');
-  try {
-    const data = await fetchWeather();
-    renderWeather(data);
-  } catch (e) {
-    bodyEl.innerHTML = `<p class="weather-empty error">Error: ${escHtml(e.message)}</p>`;
-    document.getElementById('weather-updated').textContent = `Failed ${fmtTime(new Date())}`;
-  }
-}
-
-refreshWeather();
-setInterval(refreshWeather, 15 * 60 * 1000);
-
 // ─── Train departures ──────────────────────────────────────────────────────
 
 const TRAIN_STATIONS = [
-  { crs: 'hyh', boardId: 'train-hyh-board', updatedId: 'train-hyh-updated', walkMins: 15 },
-  { crs: 'cet', boardId: 'train-cet-board', updatedId: 'train-cet-updated', walkMins: 20 },
+  { crs: 'hyh', boardId: 'train-hyh-board', updatedId: 'train-hyh-updated' },
+  { crs: 'cet', boardId: 'train-cet-board', updatedId: 'train-cet-updated' },
 ];
 
+// Realtime Trains refresh token — set via RTT_TOKEN in .env
+const RTT_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4Y2E5OGJmNS1hYWU1LTQ3NzAtOWMzOS1lYmMwOTMyNjAzZWQiLCJpc3MiOiJodHRwczovL2FwaS1wb3J0YWwucnR0LmlvIn0.GOcC6Lb6kLuACKFAphGwfVDtjHm4JpM4xz-hs24zOAs";
+
+// Cached short-life access token
+let rttAccessToken = null;
+let rttAccessExpiry = 0;
 
 function fmtTime(d) {
   return d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
@@ -447,33 +346,45 @@ function isoToHHMM(iso) {
   return d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', hour12: false });
 }
 
+async function getRttAccessToken() {
+  if (rttAccessToken && Date.now() < rttAccessExpiry - 60000) return rttAccessToken;
+  const res = await fetch('https://data.rtt.io/api/get_access_token', {
+    headers: { 'Authorization': `Bearer ${RTT_TOKEN}` },
+  });
+  if (!res.ok) throw new Error(`Token exchange failed: HTTP ${res.status}`);
+  const data = await res.json();
+  rttAccessToken = data.token;
+  rttAccessExpiry = new Date(data.validUntil).getTime();
+  return rttAccessToken;
+}
+
 async function fetchDepartures(crs) {
-  const res = await fetch(`/rtt/gb-nr/location?location=${crs.toUpperCase()}`);
+  if (!RTT_TOKEN) throw new Error('RTT_TOKEN not configured');
+  const token = await getRttAccessToken();
+  const res = await fetch(`https://data.rtt.io/gb-nr/location?location=${crs.toUpperCase()}`, {
+    headers: { 'Authorization': `Bearer ${token}` },
+  });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.json();
 }
 
-const TRAIN_WINDOW_MS = 45 * 60 * 1000;
-const WALK_TIME_MS    = 20 * 60 * 1000;
-
 function trainProgressPct(iso, now) {
   if (!iso) return 0;
-  const msLeft = new Date(iso) - now;
+  const due = new Date(iso);
+  const windowMs = 30 * 60 * 1000;
+  const msLeft = due - now;
   if (msLeft <= 0) return 100;
-  if (msLeft >= TRAIN_WINDOW_MS) return 0;
-  return ((TRAIN_WINDOW_MS - msLeft) / TRAIN_WINDOW_MS) * 100;
+  if (msLeft >= windowMs) return 0;
+  return ((windowMs - msLeft) / windowMs) * 100;
 }
 
-function trainUrgency(iso, now, walkMins) {
-  if (!iso) return 'cool';
-  const msLeft = new Date(iso) - now;
-  const walkMs = walkMins * 60 * 1000;
-  if (msLeft <= walkMs) return 'hot';
-  if (msLeft <= walkMs + 10 * 60 * 1000) return 'warm';
+function trainUrgency(pct) {
+  if (pct >= 80) return 'hot';
+  if (pct >= 50) return 'warm';
   return 'cool';
 }
 
-function renderTrainBoard(data, boardEl, updatedEl, walkMins) {
+function renderTrainBoard(data, boardEl, updatedEl) {
   const services = data.services || [];
   const now = new Date();
   updatedEl.textContent = `Updated ${fmtTime(now)}`;
@@ -506,11 +417,7 @@ function renderTrainBoard(data, boardEl, updatedEl, walkMins) {
 
     const effectiveIso = (!cancelled && realtimeIso) ? realtimeIso : scheduledIso;
     const pct = cancelled ? 0 : trainProgressPct(effectiveIso, now);
-    const urg = cancelled ? 'cool' : trainUrgency(effectiveIso, now, walkMins);
-
-    const urgMsg = urg === 'hot'  ? `⚠️ You won't make this on foot`
-                 : urg === 'warm' ? `🚶 Leave soon to make this train`
-                 : '';
+    const urg = trainUrgency(pct);
 
     return `
       <div class="train-entry ${urg}${cancelled ? ' train-cancelled' : ''}">
@@ -519,19 +426,18 @@ function renderTrainBoard(data, boardEl, updatedEl, walkMins) {
           <span class="train-dest">${escHtml(dest)}</span>
           <span class="train-status ${statusClass}">${escHtml(statusText)}</span>
         </div>
-        ${urgMsg ? `<div class="train-urg-msg">${urgMsg}</div>` : ''}
-        <div class="train-progress-bar"><div class="train-fill" style="width:${(100 - pct).toFixed(1)}%"></div></div>
+        <div class="train-progress-bar"><div class="train-fill" style="width:${pct.toFixed(1)}%"></div></div>
       </div>`;
   }).join('');
 }
 
 async function refreshTrains() {
-  for (const { crs, boardId, updatedId, walkMins } of TRAIN_STATIONS) {
+  for (const { crs, boardId, updatedId } of TRAIN_STATIONS) {
     const boardEl = document.getElementById(boardId);
     const updatedEl = document.getElementById(updatedId);
     try {
       const data = await fetchDepartures(crs);
-      renderTrainBoard(data, boardEl, updatedEl, walkMins);
+      renderTrainBoard(data, boardEl, updatedEl);
     } catch (e) {
       boardEl.innerHTML = `<p class="train-empty error">Error: ${escHtml(e.message)}</p>`;
       updatedEl.textContent = `Failed ${fmtTime(new Date())}`;
