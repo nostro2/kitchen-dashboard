@@ -82,14 +82,18 @@ CRON_JOB="*/30 * * * * sudo /usr/bin/systemctl restart ${SERVICE_NAME}"
 ( crontab -l 2>/dev/null | grep -v "systemctl restart ${SERVICE_NAME}"; echo "$CRON_JOB" ) | crontab -
 echo "      Cron job set."
 
-# ── 7. Autostart Firefox in kiosk mode ───────────────────────────────────────
-echo "[7/7] Setting up Firefox kiosk autostart..."
+# ── 7. Install unclutter (hide mouse cursor) ─────────────────────────────────
+echo "[7/8] Installing unclutter..."
+sudo apt-get install -y -q unclutter
+
+# ── 8. Autostart Firefox in kiosk mode ───────────────────────────────────────
+echo "[8/8] Setting up Firefox kiosk autostart..."
 mkdir -p "$HOME/.config/autostart"
 cat > "$HOME/.config/autostart/dashboard.desktop" << EOF
 [Desktop Entry]
 Type=Application
 Name=Kitchen Dashboard
-Exec=bash -c 'sleep 15 && firefox --kiosk http://localhost:${PORT}'
+Exec=bash -c 'sleep 15 && unclutter -idle 0.1 -root & firefox --kiosk http://localhost:${PORT}'
 EOF
 echo "      Autostart written."
 
