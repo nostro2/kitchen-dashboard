@@ -4,8 +4,8 @@
   "description": "Household chores dashboard",
   "scripts": {
     "build": "node scripts/build.js",
-    "dev": "npm run build && npx http-server . -p 3000 -o",
-    "start": "npm run build && npx http-server . -p 3000"
+    "dev": "npm run build && python3 server.py 3000",
+    "start": "npm run build && python3 server.py 3000"
   },
   "dependencies": {
     "js-yaml": "^4.1.0"
