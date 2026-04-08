@@ -17,28 +17,28 @@ body {
 
 /* ─── Theme: Minimalist (default) ─────────────────────────────────────────── */
 body[data-theme="minimalist"] {
-  color-scheme: light;
-  --bg:          #f4f4f5;
-  --surface:     #ffffff;
-  --text:        #18181b;
-  --text-muted:  #71717a;
-  --border:      #e4e4e7;
-  --accent:      #3b82f6;
+  color-scheme: dark;
+  --bg:          #000000;
+  --surface:     #0d0d0d;
+  --text:        #e2e2e2;
+  --text-muted:  #666666;
+  --border:      #1f1f1f;
+  --accent:      #4f8ef7;
   --font:        system-ui, -apple-system, sans-serif;
   --radius:      10px;
-  --shadow:      0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
-  --shadow-hover:0 4px 12px rgba(0,0,0,0.12);
-  --header-bg:   #ffffff;
+  --shadow:      0 1px 3px rgba(0,0,0,0.6), 0 1px 2px rgba(0,0,0,0.4);
+  --shadow-hover:0 4px 12px rgba(0,0,0,0.8);
+  --header-bg:   #0d0d0d;
 
-  --cool-bg:  #eff6ff;
-  --cool-bar: #3b82f6;
-  --cool-text:#1d4ed8;
-  --warm-bg:  #fffbeb;
-  --warm-bar: #f59e0b;
-  --warm-text:#b45309;
-  --hot-bg:   #fef2f2;
-  --hot-bar:  #ef4444;
-  --hot-text: #b91c1c;
+  --cool-bg:  #050d1a;
+  --cool-bar: #4f8ef7;
+  --cool-text:#89b4ff;
+  --warm-bg:  #150e00;
+  --warm-bar: #e89c2f;
+  --warm-text:#f5b84a;
+  --hot-bg:   #160000;
+  --hot-bar:  #e84040;
+  --hot-text: #ff6b6b;
 }
 
 /* ─── Theme: Dark (Solarized Dark) ───────────────────────────────────────── */
@@ -452,6 +452,7 @@ main {
   white-space: nowrap;
 }
 .train-status.on-time  { color: #16a34a; }
+[data-theme="minimalist"] .train-status.on-time { color: #4ade80; }
 .train-status.delayed  { color: var(--warm-text); }
 .train-status.cancelled{ color: var(--hot-text); }
 
