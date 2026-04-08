@@ -51,7 +51,11 @@ def get_access_token():
     if not data.get('token'):
         raise RuntimeError('Token exchange failed: no token in response')
     _access_token = data['token']
-    _access_expiry = time.mktime(time.strptime(data['validUntil'], '%Y-%m-%dT%H:%M:%SZ')) if 'validUntil' in data else time.time() + 300
+    if 'validUntil' in data:
+        from datetime import datetime, timezone
+        _access_expiry = datetime.fromisoformat(data['validUntil']).astimezone(timezone.utc).timestamp()
+    else:
+        _access_expiry = time.time() + 300
     return _access_token
 
 

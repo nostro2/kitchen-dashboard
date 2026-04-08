@@ -17,7 +17,7 @@ cat > "$HOME/.config/autostart/dashboard.desktop" << EOF
 [Desktop Entry]
 Type=Application
 Name=Kitchen Dashboard
-Exec=bash -c 'sleep 15 && unclutter -idle 0.1 -root & xdotool mousemove 0 99999 & firefox --kiosk http://localhost:${PORT}'
+Exec=bash -c 'sleep 15 && unclutter -idle 0.1 -root & DISPLAY=:0 xdotool mousemove 0 99999 & firefox --kiosk http://localhost:${PORT}'
 EOF
 
 # Restart service
