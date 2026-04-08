@@ -544,3 +544,6 @@ async function refreshTrains() {
 
 refreshTrains();
 setInterval(refreshTrains, 60000);
+
+// Reload the page every hour to pick up any code updates
+setInterval(() => location.reload(), 60 * 60 * 1000);
