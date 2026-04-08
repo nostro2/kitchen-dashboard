@@ -75,11 +75,12 @@ $USER ALL=(ALL) NOPASSWD: /usr/bin/systemctl restart ${SERVICE_NAME}
 EOF
 sudo chmod 440 "$SUDOERS_FILE"
 
-# ── 6. Cron: pull + restart every 30 minutes ─────────────────────────────────
-echo "[6/6] Setting up cron job (pull every 30 minutes)..."
-CRON_JOB="*/30 * * * * sudo /usr/bin/systemctl restart ${SERVICE_NAME}"
+# ── 6. Cron: run update script every 30 minutes ──────────────────────────────
+echo "[6/6] Setting up cron job (update every 30 minutes)..."
+chmod +x "$INSTALL_DIR/scripts/update.sh"
+CRON_JOB="*/30 * * * * $INSTALL_DIR/scripts/update.sh >> /tmp/dashboard-update.log 2>&1"
 # Add only if not already present
-( crontab -l 2>/dev/null | grep -v "systemctl restart ${SERVICE_NAME}"; echo "$CRON_JOB" ) | crontab -
+( crontab -l 2>/dev/null | grep -v "dashboard.*update\|systemctl restart ${SERVICE_NAME}"; echo "$CRON_JOB" ) | crontab -
 echo "      Cron job set."
 
 # ── 7. Install unclutter (hide mouse cursor) ─────────────────────────────────
