@@ -83,9 +83,9 @@ CRON_JOB="*/30 * * * * $INSTALL_DIR/scripts/update.sh >> /tmp/dashboard-update.l
 ( crontab -l 2>/dev/null | grep -v "dashboard.*update\|systemctl restart ${SERVICE_NAME}"; echo "$CRON_JOB" ) | crontab -
 echo "      Cron job set."
 
-# ── 7. Install unclutter (hide mouse cursor) ─────────────────────────────────
-echo "[7/8] Installing unclutter..."
-sudo apt-get install -y -q unclutter
+# ── 7. Install unclutter + xdotool (hide/move mouse cursor) ──────────────────
+echo "[7/8] Installing unclutter and xdotool..."
+sudo apt-get install -y -q unclutter xdotool
 
 # ── 8. Autostart Firefox in kiosk mode ───────────────────────────────────────
 echo "[8/8] Setting up Firefox kiosk autostart..."
@@ -94,7 +94,7 @@ cat > "$HOME/.config/autostart/dashboard.desktop" << EOF
 [Desktop Entry]
 Type=Application
 Name=Kitchen Dashboard
-Exec=bash -c 'sleep 15 && unclutter -idle 0.1 -root & firefox --kiosk http://localhost:${PORT}'
+Exec=bash -c 'sleep 15 && unclutter -idle 0.1 -root & xdotool mousemove 0 99999 & firefox --kiosk http://localhost:${PORT}'
 EOF
 echo "      Autostart written."
 
