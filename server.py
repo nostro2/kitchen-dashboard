@@ -69,6 +69,12 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         else:
             super().do_GET()
 
+    def end_headers(self):
+        path = self.path.split('?')[0]
+        if path.endswith(('.js', '.css')):
+            self.send_header('Cache-Control', 'no-store')
+        super().end_headers()
+
     def _proxy_rtt(self):
         # /rtt/gb-nr/location?location=HYH → data.rtt.io/gb-nr/location?location=HYH
         rtt_path = self.path[4:]  # strip /rtt → /gb-nr/...
