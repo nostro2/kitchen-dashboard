@@ -81,8 +81,8 @@ function computeWeeklyAnchored(s, now, task) {
   // The due date is the target weekday within (or starting from) that window
   let nextDue = advanceToWeekday(windowStart, targetDay);
 
-  // If we've passed this occurrence (including today), roll to the next cycle
-  if (nextDue <= startOfDay(now)) {
+  // If the due date day is strictly in the past, roll to the next cycle
+  if (startOfDay(nextDue) < startOfDay(now)) {
     const nextWindowStart = addDays(anchor, (cycleIndex + 1) * interval * 7);
     nextDue = advanceToWeekday(nextWindowStart, targetDay);
   }
@@ -118,7 +118,7 @@ function computeMonthly(s, now) {
   let nextDue = new Date(y, m, day, 0, 0, 0, 0);
   let cycleStart;
 
-  if (nextDue <= startOfDay(now)) {
+  if (startOfDay(nextDue) < startOfDay(now)) {
     // This month's date has passed — next is next month
     cycleStart = nextDue;
     nextDue = new Date(y, m + 1, day, 0, 0, 0, 0);
@@ -148,6 +148,7 @@ function urgencyClass(pct, nextDue, now) {
 function countdownText(nextDue, now) {
   const diffMs = nextDue - now;
   if (Math.abs(diffMs) < 60000) return 'Due now';
+  if (startOfDay(nextDue).getTime() === startOfDay(now).getTime()) return 'Due today';
 
   const abs = Math.abs(diffMs);
   const days = Math.floor(abs / DAY_MS);
@@ -190,7 +191,7 @@ function renderCards(tasks, filters) {
     if (assignee && t.assignee !== assignee) continue;
     if (urgency && urg !== urgency) continue;
 
-    const overdue = nextDue < now && !inactive;
+    const overdue = startOfDay(nextDue) < startOfDay(now) && !inactive;
     const card = document.createElement('div');
     card.className = `card ${urg}${inactive ? ' inactive' : ''}${overdue ? ' overdue' : ''}`;
 
@@ -273,7 +274,7 @@ function setTheme(theme) {
 
 async function init() {
   // Theme
-  const savedTheme = localStorage.getItem('theme') || 'minimalist';
+  const savedTheme = localStorage.getItem('theme') || 'cozy';
   setTheme(savedTheme);
 
   document.querySelectorAll('.theme-btn').forEach(btn => {
