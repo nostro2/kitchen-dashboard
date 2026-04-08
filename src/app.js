@@ -15,7 +15,9 @@ function startOfDay(d) {
 }
 
 function addDays(d, n) {
-  return new Date(d.getTime() + n * DAY_MS);
+  const r = new Date(d);
+  r.setDate(r.getDate() + n);
+  return r;
 }
 
 function daysBetween(a, b) {
