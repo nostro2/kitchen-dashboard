@@ -274,7 +274,7 @@ function setTheme(theme) {
 
 async function init() {
   // Theme
-  const savedTheme = localStorage.getItem('theme') || 'cozy';
+  const savedTheme = localStorage.getItem('theme') || 'minimalist';
   setTheme(savedTheme);
 
   document.querySelectorAll('.theme-btn').forEach(btn => {
