@@ -387,7 +387,7 @@ function renderWeather(data) {
     const name = i === 0 ? 'Today'
                : i === 1 ? 'Tomorrow'
                : date.toLocaleDateString(undefined, { weekday: 'short' });
-    const [icon] = wmoInfo(d.weather_code[i]);
+    const [icon] = wmoInfo(i === 0 ? c.weather_code : d.weather_code[i]);
     const hi = Math.round(d.temperature_2m_max[i]);
     const lo = Math.round(d.temperature_2m_min[i]);
     const rain = d.precipitation_probability_max[i];
