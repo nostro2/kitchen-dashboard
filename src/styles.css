@@ -251,6 +251,46 @@ main {
 }
 .card.inactive:hover { transform: none; box-shadow: var(--shadow); }
 
+/* ─── Action buttons ──────────────────────────────────────────────────────── */
+.card-actions {
+  display: flex;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+}
+
+.action-btn {
+  font-size: 0.72rem;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  line-height: 1.4;
+}
+.action-btn:hover { background: var(--border); color: var(--text); }
+
+/* ─── Firework particles ──────────────────────────────────────────────────── */
+@keyframes particle-fly {
+  0%   { opacity: 1;   transform: translate(-50%, -50%) scale(1); }
+  80%  { opacity: 1; }
+  100% { opacity: 0;   transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0.2) rotate(120deg); }
+}
+
+/* Card exit animations */
+@keyframes card-done-exit {
+  0%   { transform: scale(1);    opacity: 1; }
+  15%  { transform: scale(1.05); opacity: 1; }
+  100% { transform: scale(0.92); opacity: 0; }
+}
+@keyframes card-skip-exit {
+  0%   { transform: translateX(0);    opacity: 1; }
+  100% { transform: translateX(40px); opacity: 0; }
+}
+.card.flash-done { animation: card-done-exit 0.5s ease-in forwards; pointer-events: none; }
+.card.flash-skip { animation: card-skip-exit 0.4s ease-in forwards; pointer-events: none; }
+
 /* ─── Card icon ───────────────────────────────────────────────────────────── */
 .card-icon {
   font-size: 1.8rem;

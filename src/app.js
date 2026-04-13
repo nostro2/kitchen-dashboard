@@ -62,10 +62,20 @@ function computeSchedule(task, now) {
 
 function computeWeeklySimple(s, now) {
   const targetDay = WEEKDAY_MAP[s.weekday.toLowerCase()];
-  const cycleStart = prevWeekday(now, targetDay);
+  const lastOccurrence = prevWeekday(now, targetDay);
+  const daysSinceLast = daysBetween(lastOccurrence, now);
+
+  if (daysSinceLast === 1) {
+    // Grace period: show as overdue for the day after the due date
+    const cycleStart = addDays(lastOccurrence, -7);
+    const nextDue = lastOccurrence;
+    return { cycleStart, nextDue, pct: progressPct(cycleStart, nextDue, now), inactive: false };
+  }
+
+  // Normal: new cycle
+  const cycleStart = lastOccurrence;
   const nextDue = addDays(cycleStart, 7);
-  const pct = progressPct(cycleStart, nextDue, now);
-  return { cycleStart, nextDue, pct, inactive: false };
+  return { cycleStart, nextDue, pct: progressPct(cycleStart, nextDue, now), inactive: false };
 }
 
 function computeWeeklyAnchored(s, now, task) {
@@ -81,8 +91,8 @@ function computeWeeklyAnchored(s, now, task) {
   // The due date is the target weekday within (or starting from) that window
   let nextDue = advanceToWeekday(windowStart, targetDay);
 
-  // If the due date day is strictly in the past, roll to the next cycle
-  if (startOfDay(nextDue) < startOfDay(now)) {
+  // If the due date is more than 1 day in the past, roll to the next cycle (1-day grace)
+  if (addDays(startOfDay(nextDue), 1) < startOfDay(now)) {
     const nextWindowStart = addDays(anchor, (cycleIndex + 1) * interval * 7);
     nextDue = advanceToWeekday(nextWindowStart, targetDay);
   }
@@ -118,8 +128,8 @@ function computeMonthly(s, now) {
   let nextDue = new Date(y, m, day, 0, 0, 0, 0);
   let cycleStart;
 
-  if (startOfDay(nextDue) < startOfDay(now)) {
-    // This month's date has passed — next is next month
+  if (addDays(startOfDay(nextDue), 1) < startOfDay(now)) {
+    // This month's date has passed by more than 1 day — next is next month (1-day grace)
     cycleStart = nextDue;
     nextDue = new Date(y, m + 1, day, 0, 0, 0, 0);
   } else {
@@ -164,6 +174,103 @@ function countdownText(nextDue, now) {
   return diffMs < 0 ? `Overdue by ${str}` : `Due in ${str}`;
 }
 
+// ─── Task completion state ────────────────────────────────────────────────────
+
+const COMPLETIONS_KEY = 'taskCompletions';
+
+function loadCompletions() {
+  try { return JSON.parse(localStorage.getItem(COMPLETIONS_KEY)) || {}; }
+  catch { return {}; }
+}
+
+function saveCompletions(data) {
+  localStorage.setItem(COMPLETIONS_KEY, JSON.stringify(data));
+}
+
+function getCompletion(task, cycleStart) {
+  const data = loadCompletions();
+  const entry = data[task.title];
+  if (!entry) return null;
+  // Auto-expire: only valid for the current cycle
+  if (entry.cycleStartISO !== cycleStart.toISOString()) return null;
+  return entry.action;
+}
+
+function setCompletion(task, cycleStart, action) {
+  const data = loadCompletions();
+  if (action === null) {
+    delete data[task.title];
+  } else {
+    data[task.title] = { action, cycleStartISO: cycleStart.toISOString() };
+  }
+  saveCompletions(data);
+}
+
+function advanceByInterval(schedule, date) {
+  if (schedule.type === 'monthly') {
+    const d = new Date(date);
+    d.setMonth(d.getMonth() + (schedule.interval || 1));
+    return d;
+  }
+  return addDays(date, (schedule.interval || 1) * 7);
+}
+
+// ─── Firework animation ───────────────────────────────────────────────────────
+
+function launchFirework(card) {
+  const rect = card.getBoundingClientRect();
+  const ox = rect.left + rect.width * 0.18; // near the icon
+  const oy = rect.top  + rect.height * 0.4;
+
+  const colors = ['#5b9ea0','#7ec8ca','#c8a96e','#e0c88a','#c85a5a','#e88080','#f0ece3','#66bb6a','#ffd54f','#a78bfa','#f472b6'];
+
+  const layer = document.createElement('div');
+  layer.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden';
+  document.body.appendChild(layer);
+
+  // Three staggered bursts from slightly different origins
+  const bursts = [
+    { cx: ox,                      cy: oy,       count: 30, delay: 0,   distMin: 120, distMax: 380 },
+    { cx: ox + (Math.random()-0.5)*120, cy: oy - 60, count: 22, delay: 150, distMin: 150, distMax: 420 },
+    { cx: ox + (Math.random()-0.5)*160, cy: oy - 20, count: 18, delay: 300, distMin: 100, distMax: 350 },
+  ];
+
+  let total = bursts.reduce((s, b) => s + b.count, 0);
+  let settled = 0;
+
+  for (const burst of bursts) {
+    for (let i = 0; i < burst.count; i++) {
+      const p      = document.createElement('div');
+      const angle  = (i / burst.count) * 360 + (Math.random() - 0.5) * 25;
+      const dist   = burst.distMin + Math.random() * (burst.distMax - burst.distMin);
+      const dx     = Math.cos(angle * Math.PI / 180) * dist;
+      const dy     = Math.sin(angle * Math.PI / 180) * dist - 60; // strong upward bias
+      const size   = 6 + Math.random() * 9;
+      const isRect = Math.random() > 0.45;
+      const color  = colors[Math.floor(Math.random() * colors.length)];
+      const dur    = 900 + Math.random() * 600;
+
+      p.style.cssText = `
+        position:absolute;
+        left:${burst.cx}px; top:${burst.cy}px;
+        width:${isRect ? Math.round(size * 0.5) : size}px;
+        height:${isRect ? Math.round(size * 1.8) : size}px;
+        background:${color};
+        border-radius:${isRect ? '2px' : '50%'};
+        animation:particle-fly ${dur}ms ${burst.delay}ms ease-out forwards;
+        opacity:0;
+        --dx:${dx.toFixed(1)}px;
+        --dy:${dy.toFixed(1)}px;
+      `;
+
+      layer.appendChild(p);
+      p.addEventListener('animationend', () => {
+        if (++settled === total) layer.remove();
+      }, { once: true });
+    }
+  }
+}
+
 // ─── Rendering ────────────────────────────────────────────────────────────────
 
 let allTasks = [];
@@ -174,7 +281,13 @@ function renderCards(tasks, filters) {
 
   const computed = tasks.map(t => {
     const sched = computeSchedule(t, now);
-    return { task: t, ...sched };
+    const completion = getCompletion(t, sched.cycleStart);
+    // Done or Skip: advance nextDue to next interval and reset progress
+    if ((completion === 'done' || completion === 'skip') && !sched.inactive) {
+      sched.nextDue = advanceByInterval(t.schedule, sched.nextDue);
+      sched.pct = 0;
+    }
+    return { task: t, ...sched, completion };
   });
 
   computed.sort((a, b) => a.nextDue - b.nextDue);
@@ -184,7 +297,7 @@ function renderCards(tasks, filters) {
   container.innerHTML = '';
   let shown = 0;
 
-  for (const { task: t, nextDue, pct, inactive } of computed) {
+  for (const { task: t, nextDue, cycleStart, pct, inactive, completion } of computed) {
     const urg = urgencyClass(pct, nextDue, now);
 
     if (room && t.room !== room) continue;
@@ -192,12 +305,20 @@ function renderCards(tasks, filters) {
     if (urgency && urg !== urgency) continue;
 
     const overdue = startOfDay(nextDue) < startOfDay(now) && !inactive;
+
     const card = document.createElement('div');
-    card.className = `card ${urg}${inactive ? ' inactive' : ''}${overdue ? ' overdue' : ''}`;
+    card.className = ['card', urg, inactive ? 'inactive' : '', overdue ? 'overdue' : '']
+      .filter(Boolean).join(' ');
 
     const countdownStr = inactive || urg === 'neutral'
       ? `Due ${fmtDate(nextDue)}`
       : countdownText(nextDue, now);
+
+    const actionsHtml = inactive ? '' : `
+      <div class="card-actions">
+        <button class="action-btn done-btn" title="Mark done">✓</button>
+        <button class="action-btn skip-btn" title="Skip this cycle">↷</button>
+      </div>`;
 
     card.innerHTML = `
       <div class="card-icon">${t.icon || '📋'}</div>
@@ -207,8 +328,26 @@ function renderCards(tasks, filters) {
         ${t.description ? `<div class="card-desc">${escHtml(t.description)}</div>` : ''}
         <div class="card-countdown${overdue ? ' overdue-label' : ''}">${countdownStr}</div>
         <div class="progress-bar"><div class="fill" style="width:${(100 - pct).toFixed(1)}%"></div></div>
+        ${actionsHtml}
       </div>
     `;
+
+    if (!inactive) {
+      card.querySelector('.done-btn').addEventListener('click', e => {
+        e.stopPropagation();
+        setCompletion(t, cycleStart, 'done');
+        launchFirework(card);
+        card.classList.add('flash-done');
+        setTimeout(() => renderCards(allTasks, getFilters()), 700);
+      });
+      card.querySelector('.skip-btn').addEventListener('click', e => {
+        e.stopPropagation();
+        setCompletion(t, cycleStart, 'skip');
+        card.classList.add('flash-skip');
+        card.addEventListener('animationend', () => renderCards(allTasks, getFilters()), { once: true });
+      });
+    }
+
     container.appendChild(card);
     shown++;
   }
