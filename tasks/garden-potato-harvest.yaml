@@ -1,0 +1,11 @@
+title: "Harvest potatoes"
+description: "Maincrop ready ~20 weeks after planting. Check by gently digging one plant — skins should be set."
+room: "Garden"
+assignee: "Shared"
+priority: "high"
+icon: "🥔"
+
+schedule:
+  type: "once"
+  date: "2026-09-07"
+  start_date: "2026-04-20"

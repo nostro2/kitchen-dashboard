@@ -1,0 +1,11 @@
+title: "Earth up potatoes (2nd)"
+description: "Second earthing up — cover remaining stems with compost"
+room: "Garden"
+assignee: "Shared"
+priority: "medium"
+icon: "🌱"
+
+schedule:
+  type: "once"
+  date: "2026-06-01"
+  start_date: "2026-05-11"

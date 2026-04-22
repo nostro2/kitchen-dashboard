@@ -49,14 +49,12 @@ function prevWeekday(now, targetDay) {
 function computeSchedule(task, now) {
   const s = task.schedule;
 
-  if (s.type === 'monthly') {
-    return computeMonthly(s, now);
-  }
+  if (s.type === 'monthly') return computeMonthly(s, now);
+  if (s.type === 'daily')   return computeDaily(s, now, task);
+  if (s.type === 'once')    return computeOnce(s, now);
   // weekly (interval 1 or >1)
   const interval = s.interval || 1;
-  if (interval === 1) {
-    return computeWeeklySimple(s, now);
-  }
+  if (interval === 1) return computeWeeklySimple(s, now);
   return computeWeeklyAnchored(s, now, task);
 }
 
@@ -66,10 +64,10 @@ function computeWeeklySimple(s, now) {
   const daysSinceLast = daysBetween(lastOccurrence, now);
 
   if (daysSinceLast === 1) {
-    // Grace period: show as overdue for the day after the due date
-    const cycleStart = addDays(lastOccurrence, -7);
+    // Grace period: show as overdue for the day after the due date.
+    // cycleStart must stay as lastOccurrence (not shifted back) so completion keys stay valid.
     const nextDue = lastOccurrence;
-    return { cycleStart, nextDue, pct: progressPct(cycleStart, nextDue, now), inactive: false };
+    return { cycleStart: lastOccurrence, nextDue, pct: 100, inactive: false };
   }
 
   // Normal: new cycle
@@ -139,6 +137,41 @@ function computeMonthly(s, now) {
 
   const pct = progressPct(cycleStart, nextDue, now);
   return { cycleStart, nextDue, pct, inactive: false };
+}
+
+function weatherAdjustedInterval(task, baseInterval) {
+  if (!task.weather_sensitive || !currentWeather) return { interval: baseInterval, weatherNote: null };
+  const todayMax = currentWeather.daily.temperature_2m_max[0];
+  const todayRain = currentWeather.daily.precipitation_probability_max[0];
+  if (todayMax >= 25 && todayRain < 30) return { interval: 1, weatherNote: '🌡️ Hot & dry — watering daily' };
+  if (todayRain >= 60)                  return { interval: 3, weatherNote: '🌧️ Rain forecast — watering reduced' };
+  return { interval: baseInterval, weatherNote: null };
+}
+
+function computeDaily(s, now, task) {
+  const base = s.interval || 1;
+  const { interval, weatherNote } = task ? weatherAdjustedInterval(task, base) : { interval: base, weatherNote: null };
+  const anchor = s.anchor_date ? parseDate(s.anchor_date) : startOfDay(now);
+  const daysSinceAnchor = Math.max(0, daysBetween(anchor, now));
+  const cycleIndex = Math.floor(daysSinceAnchor / interval);
+  const lastOccurrence = addDays(anchor, cycleIndex * interval);
+  const daysSinceLast = daysBetween(lastOccurrence, now);
+
+  if (daysSinceLast === 1 && interval > 1) {
+    // cycleStart stays as lastOccurrence so completion keys stay valid across the grace day.
+    return { cycleStart: lastOccurrence, nextDue: lastOccurrence, pct: 100, inactive: false, weatherNote };
+  }
+
+  const cycleStart = lastOccurrence;
+  const nextDue = addDays(cycleStart, interval);
+  return { cycleStart, nextDue, pct: progressPct(cycleStart, nextDue, now), inactive: false, weatherNote };
+}
+
+function computeOnce(s, now) {
+  const nextDue = parseDate(s.date);
+  const cycleStart = s.start_date ? parseDate(s.start_date) : addDays(nextDue, -30);
+  const pastGrace = startOfDay(now) > addDays(startOfDay(nextDue), 1);
+  return { cycleStart, nextDue, pct: progressPct(cycleStart, nextDue, now), inactive: pastGrace };
 }
 
 function progressPct(cycleStart, nextDue, now) {
@@ -212,6 +245,8 @@ function advanceByInterval(schedule, date) {
     d.setMonth(d.getMonth() + (schedule.interval || 1));
     return d;
   }
+  if (schedule.type === 'daily') return addDays(date, schedule.interval || 1);
+  if (schedule.type === 'once')  return date;
   return addDays(date, (schedule.interval || 1) * 7);
 }
 
@@ -274,6 +309,7 @@ function launchFirework(card) {
 // ─── Rendering ────────────────────────────────────────────────────────────────
 
 let allTasks = [];
+let currentWeather = null;
 
 function renderCards(tasks, filters) {
   const container = document.getElementById('cards');
@@ -297,12 +333,13 @@ function renderCards(tasks, filters) {
   container.innerHTML = '';
   let shown = 0;
 
-  for (const { task: t, nextDue, cycleStart, pct, inactive, completion } of computed) {
+  for (const { task: t, nextDue, cycleStart, pct, inactive, completion, weatherNote } of computed) {
     const urg = urgencyClass(pct, nextDue, now);
 
     if (room && t.room !== room) continue;
     if (assignee && t.assignee !== assignee) continue;
     if (urgency && urg !== urgency) continue;
+    if (t.schedule.type === 'once' && (completion === 'done' || completion === 'skip')) continue;
 
     const overdue = startOfDay(nextDue) < startOfDay(now) && !inactive;
 
@@ -326,6 +363,7 @@ function renderCards(tasks, filters) {
         <div class="card-title">${escHtml(t.title)}</div>
         <div class="card-meta">${escHtml(t.room || '')}${t.assignee ? ' · ' + escHtml(t.assignee) : ''}</div>
         ${t.description ? `<div class="card-desc">${escHtml(t.description)}</div>` : ''}
+        ${weatherNote ? `<div class="card-weather-note">${escHtml(weatherNote)}</div>` : ''}
         <div class="card-countdown${overdue ? ' overdue-label' : ''}">${countdownStr}</div>
         <div class="progress-bar"><div class="fill" style="width:${(100 - pct).toFixed(1)}%"></div></div>
         ${actionsHtml}
@@ -561,7 +599,9 @@ async function refreshWeather() {
   const bodyEl = document.getElementById('weather-body');
   try {
     const data = await fetchWeather();
+    currentWeather = data;
     renderWeather(data);
+    if (allTasks.length) renderCards(allTasks, getFilters());
   } catch (e) {
     bodyEl.innerHTML = `<p class="weather-empty error">Error: ${escHtml(e.message)}</p>`;
     document.getElementById('weather-updated').textContent = `Failed ${fmtTime(new Date())}`;

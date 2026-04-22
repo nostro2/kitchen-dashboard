@@ -16,7 +16,7 @@ const tasksDir = path.join(__dirname, '..', 'tasks');
 const outputFile = path.join(__dirname, '..', 'tasks.json');
 
 const REQUIRED_FIELDS = ['title', 'schedule'];
-const VALID_SCHEDULE_TYPES = ['weekly', 'monthly'];
+const VALID_SCHEDULE_TYPES = ['weekly', 'monthly', 'daily', 'once'];
 
 function validate(task, filename) {
   for (const field of REQUIRED_FIELDS) {
@@ -35,6 +35,10 @@ function validate(task, filename) {
   }
   if (task.schedule.type === 'monthly' && !task.schedule.day) {
     console.warn(`[SKIP] ${filename}: monthly schedule requires "day"`);
+    return false;
+  }
+  if (task.schedule.type === 'once' && !task.schedule.date) {
+    console.warn(`[SKIP] ${filename}: once schedule requires "date"`);
     return false;
   }
   if (task.schedule.interval > 1 && !task.schedule.anchor_date) {

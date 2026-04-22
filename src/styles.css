@@ -329,6 +329,13 @@ main {
   overflow: hidden;
 }
 
+.card-weather-note {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--warm-text, #b45309);
+  margin-bottom: 0.4rem;
+}
+
 /* ─── Countdown ───────────────────────────────────────────────────────────── */
 .card-countdown {
   font-size: 0.82rem;
