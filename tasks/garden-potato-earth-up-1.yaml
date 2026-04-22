@@ -1,0 +1,11 @@
+title: "Earth up potatoes (1st)"
+description: "Cover shoots with compost when 15–20cm tall — first earthing up"
+room: "Garden"
+assignee: "Shared"
+priority: "medium"
+icon: "🌱"
+
+schedule:
+  type: "once"
+  date: "2026-05-11"
+  start_date: "2026-04-20"

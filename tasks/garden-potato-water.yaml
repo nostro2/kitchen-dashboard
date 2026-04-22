@@ -1,0 +1,13 @@
+title: "Water potatoes"
+description: "Water potato grow bags thoroughly — check soil moisture first"
+room: "Garden"
+assignee: "Shared"
+priority: "high"
+icon: "🥔"
+
+weather_sensitive: true
+
+schedule:
+  type: "daily"
+  interval: 2
+  anchor_date: "2026-04-20"

@@ -82,6 +82,59 @@
     }
   },
   {
+    "title": "Earth up potatoes (1st)",
+    "description": "Cover shoots with compost when 15–20cm tall — first earthing up",
+    "room": "Garden",
+    "assignee": "Shared",
+    "priority": "medium",
+    "icon": "🌱",
+    "schedule": {
+      "type": "once",
+      "date": "2026-05-11",
+      "start_date": "2026-04-20"
+    }
+  },
+  {
+    "title": "Earth up potatoes (2nd)",
+    "description": "Second earthing up — cover remaining stems with compost",
+    "room": "Garden",
+    "assignee": "Shared",
+    "priority": "medium",
+    "icon": "🌱",
+    "schedule": {
+      "type": "once",
+      "date": "2026-06-01",
+      "start_date": "2026-05-11"
+    }
+  },
+  {
+    "title": "Harvest potatoes",
+    "description": "Maincrop ready ~20 weeks after planting. Check by gently digging one plant — skins should be set.",
+    "room": "Garden",
+    "assignee": "Shared",
+    "priority": "high",
+    "icon": "🥔",
+    "schedule": {
+      "type": "once",
+      "date": "2026-09-07",
+      "start_date": "2026-04-20"
+    }
+  },
+  {
+    "title": "Water potatoes",
+    "description": "Water potato grow bags thoroughly — check soil moisture first",
+    "room": "Garden",
+    "assignee": "Shared",
+    "priority": "high",
+    "icon": "🥔",
+    "weather_sensitive": true,
+    "schedule": {
+      "type": "daily",
+      "interval": 2,
+      "anchor_date": "2026-04-20"
+    }
+  },
+  {
     "title": "Mop kitchen floor",
     "description": "Sweep and mop the kitchen floor",
     "room": "Kitchen",
