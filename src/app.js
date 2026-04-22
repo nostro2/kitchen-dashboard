@@ -3,6 +3,8 @@
 const DAY_MS = 86400000;
 const WEEK_MS = 7 * DAY_MS;
 
+const URGENCY_RANK = { neutral: 0, cool: 1, warm: 2, hot: 3 };
+
 const WEEKDAY_MAP = {
   sunday: 0, monday: 1, tuesday: 2, wednesday: 3,
   thursday: 4, friday: 5, saturday: 6
@@ -50,6 +52,7 @@ function computeSchedule(task, now) {
   const s = task.schedule;
 
   if (s.type === 'monthly') return computeMonthly(s, now);
+  if (s.type === 'yearly')  return computeYearly(s, now);
   if (s.type === 'daily')   return computeDaily(s, now, task);
   if (s.type === 'once')    return computeOnce(s, now);
   // weekly (interval 1 or >1)
@@ -137,6 +140,21 @@ function computeMonthly(s, now) {
 
   const pct = progressPct(cycleStart, nextDue, now);
   return { cycleStart, nextDue, pct, inactive: false };
+}
+
+function computeYearly(s, now) {
+  const y = now.getFullYear();
+  let nextDue = new Date(y, s.month - 1, s.day, 0, 0, 0, 0);
+  let cycleStart;
+
+  if (addDays(startOfDay(nextDue), 1) < startOfDay(now)) {
+    cycleStart = nextDue;
+    nextDue = new Date(y + 1, s.month - 1, s.day, 0, 0, 0, 0);
+  } else {
+    cycleStart = new Date(y - 1, s.month - 1, s.day, 0, 0, 0, 0);
+  }
+
+  return { cycleStart, nextDue, pct: progressPct(cycleStart, nextDue, now), inactive: false };
 }
 
 function weatherAdjustedInterval(task, baseInterval) {
@@ -245,6 +263,7 @@ function advanceByInterval(schedule, date) {
     d.setMonth(d.getMonth() + (schedule.interval || 1));
     return d;
   }
+  if (schedule.type === 'yearly') { const d = new Date(date); d.setFullYear(d.getFullYear() + 1); return d; }
   if (schedule.type === 'daily') return addDays(date, schedule.interval || 1);
   if (schedule.type === 'once')  return date;
   return addDays(date, (schedule.interval || 1) * 7);
@@ -338,7 +357,7 @@ function renderCards(tasks, filters) {
 
     if (room && t.room !== room) continue;
     if (assignee && t.assignee !== assignee) continue;
-    if (urgency && urg !== urgency) continue;
+    if (urgency && URGENCY_RANK[urg] < URGENCY_RANK[urgency]) continue;
     if (t.schedule.type === 'once' && (completion === 'done' || completion === 'skip')) continue;
 
     const overdue = startOfDay(nextDue) < startOfDay(now) && !inactive;

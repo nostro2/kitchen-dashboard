@@ -1,0 +1,11 @@
+title: "Plant potatoes"
+description: "Plant seed potatoes in grow bags — chit first if not already done"
+room: "Garden"
+assignee: "Shared"
+priority: "high"
+icon: "🥔"
+
+schedule:
+  type: "yearly"
+  month: 4
+  day: 19
