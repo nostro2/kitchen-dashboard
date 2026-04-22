@@ -28,6 +28,19 @@
     }
   },
   {
+    "title": "Clean cat litter",
+    "description": "Empty and clean the cat litter tray",
+    "room": "Utility",
+    "assignee": "Shared",
+    "priority": "high",
+    "icon": "🐱",
+    "schedule": {
+      "type": "daily",
+      "interval": 3,
+      "anchor_date": "2026-04-22"
+    }
+  },
+  {
     "title": "Change bed sheets",
     "description": "Strip and wash bed linen, put on fresh sheets",
     "room": "Bedroom",
