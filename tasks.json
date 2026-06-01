@@ -1,6 +1,6 @@
 [
   {
-    "title": "Black bags, glass & cans",
+    "title": "Non-recyclable rubbish",
     "description": "Put out black bags, glass bottles, and cans for collection",
     "room": "Outside",
     "assignee": "Shared",
@@ -9,12 +9,12 @@
     "schedule": {
       "type": "weekly",
       "interval": 2,
-      "weekday": "wednesday",
-      "anchor_date": "2026-01-14"
+      "weekday": "friday",
+      "anchor_date": "2026-06-05"
     }
   },
   {
-    "title": "Cardboard & plastic",
+    "title": "Glass & Mixed recycling",
     "description": "Put out cardboard and plastic recycling for collection",
     "room": "Outside",
     "assignee": "Shared",
@@ -23,8 +23,8 @@
     "schedule": {
       "type": "weekly",
       "interval": 2,
-      "weekday": "wednesday",
-      "anchor_date": "2026-01-07"
+      "weekday": "friday",
+      "anchor_date": "2026-06-12"
     }
   },
   {

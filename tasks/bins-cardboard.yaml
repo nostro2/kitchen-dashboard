@@ -1,4 +1,4 @@
-title: "Cardboard & plastic"
+title: "Glass & Mixed recycling"
 description: "Put out cardboard and plastic recycling for collection"
 room: "Outside"
 assignee: "Shared"
@@ -8,5 +8,5 @@ icon: "♻️"
 schedule:
   type: "weekly"
   interval: 2
-  weekday: "wednesday"
-  anchor_date: "2026-01-07"
+  weekday: "friday"
+  anchor_date: "2026-06-12"

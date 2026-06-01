@@ -1,4 +1,4 @@
-title: "Black bags, glass & cans"
+title: "Non-recyclable rubbish"
 description: "Put out black bags, glass bottles, and cans for collection"
 room: "Outside"
 assignee: "Shared"
@@ -8,5 +8,5 @@ icon: "🗑️"
 schedule:
   type: "weekly"
   interval: 2
-  weekday: "wednesday"
-  anchor_date: "2026-01-14"
+  weekday: "friday"
+  anchor_date: "2026-06-05"
